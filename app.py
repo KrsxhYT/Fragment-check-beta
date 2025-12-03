@@ -9,8 +9,8 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (TelegramCheckerAdvanced; +https://github.com)"
 }
 
+
 def safe_get(url, retries=3, timeout=5):
-    """Safe requests with retries"""
     for _ in range(retries):
         try:
             return requests.get(url, headers=HEADERS, timeout=timeout)
@@ -28,7 +28,6 @@ def fragmentcheck(username):
 
     html = response.text
 
-    # Availability detection
     if response.url.startswith("https://fragment.com/?query="):
         status = "AVAILABLE"
     elif 'tm-status-avail' in html:
@@ -38,7 +37,6 @@ def fragmentcheck(username):
     else:
         status = "UNKNOWN"
 
-    # Price extraction (ALL patterns)
     price = None
     patterns = [
         r'class="tm-section-header-price">([\d\.]+)\s*TON',
@@ -72,7 +70,6 @@ def check_username(username):
 
     html = tg.text
 
-    # Telegram check
     exists_patterns = [
         '<i class="tgme_icon_user"></i>',
         'tgme_page_title',
@@ -127,5 +124,8 @@ def home():
     })
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# ----------------––––––––––
+# REQUIRED FOR VERCEL!!!
+# ----------------––––––––––
+def handler(request, *args, **kwargs):
+    return app(request.environ, lambda status, headers: (status, headers))
