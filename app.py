@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import requests, time, re
+from asgiref.wsgi import WsgiToAsgi   # REQUIRED FOR VERCEL
 
 app = Flask(__name__)
 
@@ -8,7 +9,6 @@ CREDIT = "@Krsxh"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (TelegramCheckerAdvanced; +https://github.com)"
 }
-
 
 def safe_get(url, retries=3, timeout=5):
     for _ in range(retries):
@@ -124,8 +124,7 @@ def home():
     })
 
 
-# ----------------––––––––––
-# REQUIRED FOR VERCEL!!!
-# ----------------––––––––––
-def handler(request, *args, **kwargs):
-    return app(request.environ, lambda status, headers: (status, headers))
+# -----------------------
+# REQUIRED FOR VERCEL
+# -----------------------
+asgi_app = WsgiToAsgi(app)
